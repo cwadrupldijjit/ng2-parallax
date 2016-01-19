@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"module": "umd",
+		"moduleResolution": "node",
+		"inlineSourceMap": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"removeComments": false,
+		"noImplicitAny": false
+	},
+	"exclude": [
+		"node_modules"
+	]
+}
