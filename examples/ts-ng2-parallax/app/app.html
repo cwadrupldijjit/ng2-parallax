@@ -57,7 +57,7 @@
 <p>
 	Or define the config object in your component class and just pass the reference through the HTML.  Cool thing about this is that then you could use the ParallaxConfig interface exported with the directive to type-check what you're sending it.
 </p>
-<h5>JS:</h5>
+<h5>TS:</h5>
 <pre>
     @Component({ . . . })
     class AppComponent {
@@ -198,25 +198,81 @@
         }"&gt;
 	
     &lt;div id="special-scroll-4" class="example-textboxes" #specialScroller4&gt;
-</pre>
-
-<p>
-	You could also specify the scrolling-watched element from the HTML via the ng2 special syntax of defining an element variable in the template.  Just be mindful that the '#' does gets included, not on the config object, but on the element you're wanting to pass into the object.
-</p>
-
-<h5>HTML:</h5>
-<pre>
-    &lt;div parallax [config]="{
-    	parallaxCss: 'backgroundPositionX',
-    	parallaxRatio: -3,
-    	scrollElement: <u><b>scroller</b></u>
-    }" id="third-example"&gt;&lt;/div&gt;
-	
-    &lt;div id="special-scroll-3" <u><b>#scroller</b></u>&gt;
         . . . CONTENT . . .
     &lt;/div&gt;
 </pre>
 
 <p>
+	You can see that elements can move about according to the scroll, you can set maximum and minimum constraints, specify a different unit, and use special css syntaxes (in regards to the 'transform:rotate').  Most css attributes work when you plug it in to the parallaxCss property of the config, but you have to make sure it is in camelCase, and if it's a special property, (e.g. "rotate(VALUE)", "calc(VALUE)", "translate(VALUE)", etc.) that you add the ":" and the modifier without the parentheses and value ("rotate", "calc", etc.).  With that, you should be able to have no problems with the css properties you pass in.
+</p>
+<p>
+	I would also like to mention that currently, this plugin doesn't support multiple properties being passed in and modified on scroll.  It is a possible future feature, but for now, the only way to do it is to pass in another function that modifies it further as I'll explain below.  Either that, or you can just write something by yourself to handle that.
+</p>
+
+<br>
+<h3>Example 5 - Other "parallaxCss" Options</h3>
+<p>
+	We've only really been observing examples that affect an image, which may be the bulk of what you'd be using the parallax effect for.  However, it came to my attention while I was building <a href="https://github.com/cwadrupldijjit/stallion-security-ng2">this site (source code)</a> that it would be best if I could use this on other elements as the page scrolls (in this case, shrinking the header).  As such, here are a couple of examples modifying other portions of the page:
+</p>
+<h4 parallax [config]="{
+	cb: parallaxFn,
+	cb_context: colorChange,
+	cb_args: ['g', 200, 50, 0],
+	scrollElement: specialScroller5
+}" id="fifth-example-text" #colorChange>My background and text color changes as you scroll</h4>
+<div id="special-scroll-5" class="example-textboxes" #specialScroller5>
+	<p>
+		Bacon ipsum dolor amet tenderloin pork salami leberkas ham hock pork chop. Doner sirloin capicola brisket hamburger. Filet mignon flank jowl cow turkey ground round. Kielbasa jowl alcatra biltong, meatloaf chicken pastrami swine strip steak doner pork loin jerky porchetta chuck capicola. Tail brisket shoulder capicola doner meatball ham hock.
+	</p>
+	<p>
+		Rump tri-tip chicken shoulder ball tip bresaola jowl alcatra tongue bacon shank. Beef ribs bresaola frankfurter pork tri-tip strip steak pork belly spare ribs sausage cow. Spare ribs tri-tip ribeye cupim t-bone pig corned beef. Beef frankfurter sausage t-bone, ball tip landjaeger pastrami rump kevin doner. Beef ribs venison boudin turducken shoulder pastrami, t-bone pork loin short loin sirloin. Jerky pastrami capicola pork, chuck biltong cow t-bone tenderloin tail tri-tip shank prosciutto. Corned beef pork belly kevin, bresaola sausage filet mignon swine prosciutto capicola frankfurter ball tip.
+	</p>
+	<p>
+		Spare ribs salami pastrami fatback beef ribs shankle bacon tenderloin cow ham hock shoulder corned beef short loin short ribs. Ball tip cow strip steak, fatback turkey kevin boudin meatball venison. Sausage salami meatloaf ham hock, kevin ground round short loin shankle beef ribs kielbasa tongue porchetta tenderloin beef. Turducken tri-tip pork frankfurter, kevin ball tip chicken kielbasa. Turducken picanha pastrami ham hock jerky beef frankfurter brisket bacon ball tip cow sirloin. Short loin turkey pork loin beef ribs boudin chicken jerky shankle salami meatball.
+	</p>
+</div>
+
+<h5>HTML:</h5>
+<pre>
+    &lt;h4 parallax [config]="{
+        <b>cb</b>: parallaxFn,
+        <b>cb_context</b>: <u>colorChange</u>,
+        <b>cb_args</b>: ['r', 250, 0, 250],
+        scrollElement: <u>specialScroller5</u>
+    }" id="fifth-example-text" <u>#colorChange</u>&gt;I move when you scroll!&lt;/h4&gt;
 	
+    &lt;div id="special-scroll-5" class="example-textboxes" <u>#specialScroller5</u>&gt;
+        . . . CONTENT . . .
+    &lt;/div&gt;
+</pre>
+<h5>TS:</h5>
+<pre>
+    @Component({ . . . })
+	class AppComponent {
+        parallaxFn(color: string, maxVal: number = 250, minVal: number = 0, otherValue: number = 0) {
+            // put logic here
+        }
+    }
+</pre>
+
+<p>
+	A lot is going on here.  I specified three new things in my parallax config object: "cb", "cb_context", and "cb_args".  "cb" is the callback function you'd want the parallax directive to call when it evaluates the scroll. "cb_context" is the context you want the function to run in, or the explicit "this" binding for the function. "cb_args" is an array of the arguments you want to pass into the function.  Because of the many moving parts that come into play when you specify a callback function for the parallax directive to run, I would suggest you try to acheive the affects you want without having to resort to this, but this is a viable option in case more complex logic is needed.
+</p>
+
+<br>
+<h3>Final Thoughts</h3>
+<p>
+	There are some other considerations you should have when you use this that I'd like to mention before I am fully done with this test page.  First is you have to be careful how many properties you send into the ParallaxConfig via the html route.  By default, Angular 2 does not allow more than 9 properties defined in the html, and as such if you have a really large, complex ParallaxConfig object, you need to make sure that it will work if you define it in your host component's class.
+</p>
+
+<p>
+	Callback functions are run synchronously.  Don't use any hefty process in the callback functions, as it can cause some negative affects on your page, and in the end gives the user a bad experience.  The lighter you make everything and the less you use the parallax effect on a single page, the better off this will be.
+</p>
+
+<p>
+	Feedback and issues are very helpful in the development of this component.  It will be kept up-to-date with the development of Angular 2 as much as possible.  If you'd like to see this component in another form, post an issue for it on the <a href="https://github.com/cwadrupldijjit/ng2-parallax">GitHub page</a>, and I'll do my best to work on it and get back to you.  If you'd like to help with the development of this component, feel free to send me a message or email and I can add you as a collaborator or just send a pull request out.
+</p>
+
+<p>
+	Above all, thanks for showing interest in this project!
 </p>

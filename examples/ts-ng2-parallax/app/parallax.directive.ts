@@ -110,9 +110,6 @@ class Parallax implements OnInit {
 		if (this.parallaxIf) {
 			let resultVal: string;
 			let calcVal: number;
-			// debugger;
-			
-			typeof window
 			
 			if (this.scrollElement instanceof Window)
 				calcVal = this.scrollElement.scrollY * this.parallaxRatio + this.parallaxInitVal;
@@ -125,6 +122,7 @@ class Parallax implements OnInit {
 				calcVal = this.minValue;
 			
 			// added after realizing original setup wasn't compatible in Firefox
+			// debugger;
 			if (this.cssKey === 'backgroundPosition') {
 				if (this.parallaxAxis === 'X') {
 					resultVal = calcVal + this.cssUnit + ' 0';
@@ -144,7 +142,6 @@ class Parallax implements OnInit {
 			
 			this.parallaxElement.style[this.cssKey] = resultVal;
 		}
-		// debugger;
 	}
 	
 	ngOnInit() {
@@ -154,11 +151,6 @@ class Parallax implements OnInit {
 		// console.log(this);
 		
 		for (let prop in this.config) { this[prop] = this.config[prop]; }
-		
-        cssValArray = this.parallaxCss.split(':');
-        this.cssKey = cssValArray[0];
-        this.cssValue = cssValArray[1];
-		
 		this.parallaxCss = this.parallaxCss ? this.parallaxCss : 'backgroundPositionY';
 		if (this.parallaxCss.match(/backgroundPosition/i)) {
 			if (this.parallaxCss.split('backgroundPosition')[1].toUpperCase() === 'X') {
@@ -167,6 +159,10 @@ class Parallax implements OnInit {
 			
 			this.parallaxCss = 'backgroundPosition';
 		}
+		
+        cssValArray = this.parallaxCss.split(':');
+        this.cssKey = cssValArray[0];
+        this.cssValue = cssValArray[1];
 		
         this.isSpecialVal = this.cssValue ? true : false;
         if (!this.cssValue) this.cssValue = this.cssKey;
@@ -190,11 +186,9 @@ class Parallax implements OnInit {
 			} else this.scrollElement = window;
 		}
 		
-		debugger;
-		
 		this.evaluateScroll();
 		
-		this.scrollElement.addEventListener('scroll', this.evaluateScroll);
+		this.scrollElement.addEventListener('scroll', this.evaluateScroll.bind(this));
 	}
 	
     constructor(element: ElementRef) {

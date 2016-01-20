@@ -14,7 +14,7 @@
 	background-size: initial;
 }
 
-#special-scroll-3, #special-scroll-4 {
+#special-scroll-3, #special-scroll-4, #special-scroll-5 {
 	height: 200px;
 	overflow: auto;
 	
@@ -25,7 +25,10 @@
 	height: auto;
 	width: auto;
 	
-	display:  inline-block;
+	display: inline-block;
+}
+
+#fourth-example-text, #fifth-example-text {
 	position: relative;
 }
 
@@ -40,4 +43,11 @@
 	box-sizing: border-box;
 	
 	border: 1px solid gray;
+}
+
+#fifth-example-text {
+	width: 100%;
+	height: auto;
+	padding: 20px;
+	transition: all linear .05s;
 }
