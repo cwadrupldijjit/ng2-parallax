@@ -154,6 +154,11 @@ class Parallax implements OnInit {
 		// console.log(this);
 		
 		for (let prop in this.config) { this[prop] = this.config[prop]; }
+		
+        cssValArray = this.parallaxCss.split(':');
+        this.cssKey = cssValArray[0];
+        this.cssValue = cssValArray[1];
+		
 		this.parallaxCss = this.parallaxCss ? this.parallaxCss : 'backgroundPositionY';
 		if (this.parallaxCss.match(/backgroundPosition/i)) {
 			if (this.parallaxCss.split('backgroundPosition')[1].toUpperCase() === 'X') {
@@ -162,10 +167,6 @@ class Parallax implements OnInit {
 			
 			this.parallaxCss = 'backgroundPosition';
 		}
-		
-        cssValArray = this.parallaxCss.split(':');
-        this.cssKey = cssValArray[0];
-        this.cssValue = cssValArray[1];
 		
         this.isSpecialVal = this.cssValue ? true : false;
         if (!this.cssValue) this.cssValue = this.cssKey;

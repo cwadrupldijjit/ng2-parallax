@@ -14,7 +14,30 @@
 	background-size: initial;
 }
 
-#special-scroll-3 {
+#special-scroll-3, #special-scroll-4 {
 	height: 200px;
 	overflow: auto;
+	
+	max-width: 100%;
+}
+
+#fourth-example-text {
+	height: auto;
+	width: auto;
+	
+	display:  inline-block;
+	position: relative;
+}
+
+#fourth-example-logo {
+	height: 50px;
+	width: 50px;
+	
+	float: left;
+}
+
+.example-textboxes {
+	box-sizing: border-box;
+	
+	border: 1px solid gray;
 }
