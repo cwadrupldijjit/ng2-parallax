@@ -3,7 +3,7 @@ var gulp = require('gulp'),
 	watch = require('gulp-watch'),
 	sourcemap = require('gulp-sourcemaps');
 
-var pathToTs = './src/**/*.ts';
+var pathToTs = './src/ts-ng2-parallax/app/**/*.ts';
 var tsconfig = {
 	target: 'ES5',
 	noImplicitAny: false,
@@ -20,7 +20,7 @@ function tsTranspileSystem(){
 		.pipe(sourcemap.init())
 			.pipe(tsc(tsconfig_system))
 		.pipe(sourcemap.write())
-		.pipe(gulp.dest('./src/'));
+		.pipe(gulp.dest('./src/ts-ng2-parallax/app/'));
 }
 
 function tsTranspileUmd(){

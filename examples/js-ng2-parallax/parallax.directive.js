@@ -1,13 +1,6 @@
 /* global ng */
 // ng2-parallax
 
-// import { Directive, 
-// 		 ElementRef, 
-// 		 Host, 
-// 		 Input,
-// 		 Optional, 
-// 		 OnInit } from 'angular2/core';
-
 /* 
 These are optional values you can include in the config object you can pass into the 
 directive for custom properties you want to use this with.  This tool can be used for 
@@ -71,40 +64,47 @@ cb_args: any[];
 cb_context: any;
   - callback context in the case where the callback is context-specific
 */
+
+
 (function(app) {
-	app.Parallax = function Parallax() {
-		console.log(new ng.core.ElementRef())
-		
-		this.instanceName = 'parallaxDirective';
-		
-		this.config = {};
-		
-			this.parallaxStyles = {};
-			this.cssKey = 'backgroundPosition';
-			this.parallaxCss = 'backgroundPositionY';
-			this.parallaxAxis = 'Y';
-			this.parallaxRatio = -.7;
-			this.parallaxInitVal = 0;
-			this.parallaxIf = true;
-			this.scrollerId = '';
-			this.maxValue = undefined;
-			this.minValue = undefined;
-			this.cssUnit = 'px';
-			this.cb = null;
-			this.cb_context = null;
-			this.cb_args = [];
+	app.Parallax = new ng.core.Class({
+		constructor: function Parallax(elem) {
+			// console.log(ng.core.Inject(new ng.core.ElementRef()))
 			
-			// this.hostElement = _elementRef.nativeElement; // This shouldn't be modified; it is here so 
-								   // I can initialize parallaxElement
-			// this.hostElement = this.hostElement.nativeElement;
-			debugger;
-			// this.parallaxElement = this.hostElement;
-			this.scrollElement = [];
+			this.instanceName = 'parallaxDirective';
+			
+			this.config = {};
+			
+				this.parallaxStyles = {};
+				this.cssKey = 'backgroundPosition';
+				this.parallaxCss = 'backgroundPositionY';
+				this.parallaxAxis = 'Y';
+				this.parallaxRatio = -.7;
+				this.parallaxInitVal = 0;
+				this.parallaxIf = true;
+				this.scrollerId = '';
+				this.maxValue = undefined;
+				this.minValue = undefined;
+				this.cssUnit = 'px';
+				this.cb = null;
+				this.cb_context = null;
+				this.cb_args = [];
+				
+				this.hostElement = new ng.core.ElementRef(); 
+				// This ^^^ shouldn't be modified; it is here so 
+				// I can initialize parallaxElement
+				this.hostElement = this.hostElement.nativeElement;
+				// debugger;
+				// this.parallaxElement = this.hostElement;
+				this.scrollElement = [];
+			
+			this.cssValue = '';
+			this.isSpecialValue = false;
+			
+			console.log(this.hostElement);
+		},
 		
-		this.cssValue = '';
-		this.isSpecialValue = false;
-		
-		this.ngOnInit = function ngOnInit() {
+		ngOnInit: function ngOnInit() {
 			var cssValArray;
 			
 			// console.log('%s initialized on element', this.instanceName, this.hostElement);
@@ -149,9 +149,9 @@ cb_context: any;
 			this.evaluateScroll();
 			
 			this.scrollElement.addEventListener('scroll', this.evaluateScroll);
-		}.bind(this);
+		},
 		
-		this.evaluateScroll = function evaluateScroll() {
+		evaluateScroll: function evaluateScroll() {
 			if (this.parallaxIf) {
 				var resultVal = '';
 				var calcVal;
@@ -182,10 +182,8 @@ cb_context: any;
 				
 				this.parallaxElement.style[this.cssKey] = resultVal;
 			}
-		}.bind(this);
-		
-		console.log(this.hostElement);
-	};
+		}
+	})
 	
 	app.Parallax.annotations = [
 		new ng.core.Directive({
@@ -209,103 +207,8 @@ cb_context: any;
 				'parallaxElement'
 			],
 			providers: [
-				ng.core.ElementRef
+				
 			]
-		}),
-		// new ng.core.Class({
-		// 	ngOnInit: function() {
-		// 		var cssValArray;
-				
-		// 		// console.log('%s initialized on element', this.instanceName, this.hostElement);
-		// 		console.log(this);
-				
-		// 		for (var prop in this.config) { this[prop] = this.config[prop]; }
-		// 		this.parallaxCss = this.parallaxCss ? this.parallaxCss : 'backgroundPositionY';
-		// 		if (this.parallaxCss.match(/backgroundPosition/i)) {
-		// 			if (this.parallaxCss.split('backgroundPosition')[1].toUpperCase() === 'X') {
-		// 				this.parallaxAxis = 'X';
-		// 			}
-					
-		// 			this.parallaxCss = 'backgroundPosition';
-		// 		}
-				
-		// 		cssValArray = this.parallaxCss.split(':');
-		// 		this.cssKey = cssValArray[0];
-		// 		this.cssValue = cssValArray[1];
-				
-		// 		this.isSpecialVal = this.cssValue ? true : false;
-		// 		if (!this.cssValue) this.cssValue = this.cssKey;
-				
-		// 		this.parallaxRatio = +this.parallaxRatio;
-		// 		this.parallaxInitVal = +this.parallaxInitVal;
-				
-		// 		this.parallaxElement = this.parallaxElement || this.hostElement;
-		// 		if (!this.scrollElement) {
-		// 			if (document.getElementById('parallaxScroll'))
-		// 				this.scrollElement = document.getElementById('parallaxScroll');
-		// 			else if (this.scrollerId) {
-		// 				try {
-		// 					this.scrollElement = document.getElementById(this.scrollerId);
-		// 					if (!this.scrollElement)
-		// 						throw(`The ID passed through the parallaxConfig ('${this.scrollerId}') object was not found in the document.  Defaulting to watch scrolling of the body.`);
-		// 				} catch(e) {
-		// 					console.warn(e);
-		// 					this.scrollElement = document.getElementsByTagName('body')[0];
-		// 				}
-		// 			} else this.scrollElement = document.getElementsByTagName('body')[0];
-		// 		}
-				
-		// 		this.evaluateScroll();
-				
-		// 		this.scrollElement.addEventListener('scroll', this.evaluateScroll);
-		// 	}.bind(this),
-			
-		// 	evaluateScroll: function evaluateScroll() {
-		// 		if (this.parallaxIf) {
-		// 			var resultVal = '';
-		// 			var calcVal;
-					
-		// 			calcVal = this.scrollElement.scrollTop * this.parallaxRatio + this.parallaxInitVal;
-					
-		// 			if (this.maxValue !== undefined && calcVal >= this.maxValue)
-		// 				calcVal = this.maxValue;
-		// 			else if (this.minValue !== undefined && calcVal <= this.minValue)
-		// 				calcVal = this.minValue;
-					
-		// 			// added after realizing original setup wasn't compatible in Firefox
-		// 			if (this.cssKey === 'backgroundPosition') {
-		// 				if (this.parallaxAxis === 'X') {
-		// 					resultVal = calcVal + this.cssUnit + ' 0';
-		// 				} else {
-		// 					resultVal = '0 ' + calcVal + this.cssUnit;
-		// 				}
-		// 			} else if (this.isSpecialVal) {
-		// 				resultVal = this.cssValue + '(' + calcVal + this.cssUnit + ')';
-		// 			} else { 
-		// 				resultVal = calcVal + this.cssUnit;
-		// 			}
-					
-		// 			if (this.cb) {
-		// 				this.cb.apply(this.cb_context, this.cb_args);
-		// 			}
-					
-		// 			this.parallaxElement.style[this.cssKey] = resultVal;
-		// 		}
-		// 	}.bind(this)
-		// })
+		})
 	];
-	
-	// cssKey: 'backgroundPosition',
-	// parallaxCss: 'backgroundPositionY',
-	// parallaxAxis: 'Y',
-	// parallaxRatio: -.7,
-	// parallaxInitVal: 0,
-	// parallaxIf: true,
-	// scrollerId: undefined,
-	// maxValue: undefined,
-	// minValue: undefined,
-	// cssUnit: 'px',
-	// cb: null,
-	// cb_context: null,
-	// cb_args: [],
 })(window.app || (window.app = {}));

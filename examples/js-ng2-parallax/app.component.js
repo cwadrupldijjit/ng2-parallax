@@ -10,7 +10,7 @@
 			template: '<div>{{test}}...</div><div parallax></div>',
 			directives: [
 				app.Parallax
-			]
+			],
 		})
-	];
+	];	
 })(window.app || (window.app = {}));
