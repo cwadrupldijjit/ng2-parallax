@@ -3,7 +3,8 @@ var gulp = require('gulp'),
 	watch = require('gulp-watch'),
 	sourcemap = require('gulp-sourcemaps');
 
-var pathToTs = './src/ts-ng2-parallax/app/**/*.ts';
+var pathToTs = './examples/ts-ng2-parallax/app/**/*.ts';
+var outputCssPath = './'
 var tsconfig = {
 	target: 'ES5',
 	noImplicitAny: false,
@@ -12,7 +13,7 @@ var tsconfig = {
 	emitDecoratorMetadata: true
 };
 
-function tsTranspileSystem(){
+function tsTranspileSystem() {
 	var tsconfig_system = new Object(tsconfig);
 	tsconfig_system.module = 'system';
 	
@@ -20,27 +21,23 @@ function tsTranspileSystem(){
 		.pipe(sourcemap.init())
 			.pipe(tsc(tsconfig_system))
 		.pipe(sourcemap.write())
-		.pipe(gulp.dest('./src/ts-ng2-parallax/app/'));
+		.pipe(gulp.dest('./examples/ts-ng2-parallax/app/'));
 }
 
-function tsTranspileUmd(){
-	var tsconfig_umd = new Object(tsconfig);
-	tsconfig_umd.module = 'umd';
-	
-	gulp.src(pathToTs)
-		.pipe(sourcemap.init())
-			.pipe(tsc(tsconfig_umd))
-		.pipe(sourcemap.write())
-		.pipe(gulp.dest('./src/'));
+function copyStyles() {
+	gulp.src('./src/**/*.*')
+		.pipe(gulp.dest('./examples/ts-ng2-parallax/app'))
+		.pipe(gulp.dest('./examples/js-ng2-parallax/app'))
 }
 
 function watchForChanges() {
 	watch(pathToTs, tsTranspileSystem);
-	watch(pathToTs, tsTranspileUmd);
+	watch('./src/styles.css', copyStyles);
 	watch(pathToTs, tsTranspileSystem);
 }
 
 gulp.task('tsc-system', tsTranspileSystem);
+gulp.task('copy-styles', copyStyles);
 gulp.task('watch', watchForChanges);
 
-gulp.task('default', ['tsc-system', 'watch']);
+gulp.task('default', ['tsc-system', 'copy-styles', 'watch']);

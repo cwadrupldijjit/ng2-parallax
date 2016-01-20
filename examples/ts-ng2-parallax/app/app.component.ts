@@ -7,10 +7,7 @@ import { Parallax,
 	selector: 'app',
 })
 @View({
-	template: `
-		<div>This is working, right?</div>
-		<div parallax></div>
-	`,
+	templateUrl: 'app/app.html',
 	directives: [
 		Parallax
 	]

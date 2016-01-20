@@ -103,15 +103,21 @@ class Parallax implements OnInit {
     private isSpecialVal: boolean = false;
 	
 	private hostElement: HTMLElement;
-	@Input() scrollElement: HTMLElement;
+	@Input() scrollElement: any;
 	@Input() parallaxElement: HTMLElement;
 	
 	private evaluateScroll = () => {
 		if (this.parallaxIf) {
 			let resultVal: string;
 			let calcVal: number;
+			// debugger;
 			
-			calcVal = this.scrollElement.scrollTop * this.parallaxRatio + this.parallaxInitVal;
+			typeof window
+			
+			if (this.scrollElement instanceof Window)
+				calcVal = this.scrollElement.scrollY * this.parallaxRatio + this.parallaxInitVal;
+			else
+				calcVal = this.scrollElement.scrollTop * this.parallaxRatio + this.parallaxInitVal;
 			
 			if (this.maxValue !== undefined && calcVal >= this.maxValue)
 				calcVal = this.maxValue;
@@ -138,6 +144,7 @@ class Parallax implements OnInit {
 			
 			this.parallaxElement.style[this.cssKey] = resultVal;
 		}
+		// debugger;
 	}
 	
 	ngOnInit() {
@@ -174,13 +181,15 @@ class Parallax implements OnInit {
 				try {
 					this.scrollElement = document.getElementById(this.scrollerId);
 					if (!this.scrollElement)
-						throw(`The ID passed through the parallaxConfig ('${this.scrollerId}') object was not found in the document.  Defaulting to watch scrolling of the body.`);
+						throw(`The ID passed through the parallaxConfig ('${this.scrollerId}') object was not found in the document.  Defaulting to tracking the scrolling of the window.`);
 				} catch(e) {
 					console.warn(e);
-					this.scrollElement = document.getElementsByTagName('body')[0];
+					this.scrollElement = window;
 				}
-			} else this.scrollElement = document.getElementsByTagName('body')[0];
+			} else this.scrollElement = window;
 		}
+		
+		debugger;
 		
 		this.evaluateScroll();
 		

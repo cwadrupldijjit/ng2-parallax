@@ -1,0 +1,147 @@
+<h1>Angular 2 Parallax - TypeScript</h1>
+
+<p>
+	Hi!  This is an example page to showcase how the Angular2 parallax directive works.  On the page are shown different examples of what the result is and what the configuration I used was in order to get the effect.  Please refer to the README.md for more information on the installation of this directive plugin.
+</p>
+<br>
+<h3>Example 1 - Basic Parallax Effect</h3>
+
+<p>
+	This is how it looks if you just add the "parallax" attribute onto an element, then give it a width, height, and background-image property in your .css file
+</p>
+<div parallax id="first-example"></div>
+
+<h5>HTML:</h5>
+<pre>
+	&lt;div parallax id="first-example"&gt;&lt;/div&gt;
+</pre>
+
+<h5>CSS:</h5>
+<pre>
+    *[parallax] {
+        width: 700px;
+        height: 300px;
+        
+        background-size: 100%;
+    }
+    
+    #first-example {
+        background-image: url('./assets/dawn-190055.jpg');
+    }
+</pre>
+
+<p>
+	NOTE: Each of the examples are set up similarly as far as the styles go, so I'll leave you to decide on the styling.
+</p>
+
+
+<br>
+<h3>Example 2 - Adding Configuration</h3>
+
+<p>
+	If you want to modify the effect, you can pass in a config object (definition found in the .ts file) that has the properties you want to override.
+</p>
+<div parallax [config]="{
+	parallaxInitVal: -300,
+	parallaxRatio: .3
+}" id="second-example"></div>
+
+<h5>HTML:</h5>
+<pre>
+    &lt;div parallax [config]="{
+        parallaxInitVal: -300,
+        parallaxRatio: .3
+    }" id="second-example"&gt;&lt;/div&gt;
+</pre>
+
+<p>
+	Or define the config object in your component class and just pass the reference through the HTML.  Cool thing about this is that then you could use the ParallaxConfig interface exported with the directive to type-check what you're sending it.
+</p>
+<h5>JS:</h5>
+<pre>
+    @Component({ . . . })
+    class AppComponent {
+        <u><b>parallaxConfig</b></u>: ParallaxConfig = {
+            parallaxInitVal: -300,
+            parallaxRatio: .3
+        };
+		
+        constructor() {}
+    }
+</pre>
+<h5>HTML:</h5>
+<pre>
+    (preferred syntax)
+    &lt;div parallax [config]="<u><b>parallaxConfig</b></u>" id="second-example"&gt;&lt;/div&gt;
+	
+    (alternative data-binding syntax)
+    &lt;div parallax config="{{<u><b>parallaxConfig</b></u>}}" id="second-example"&gt;&lt;/div&gt;
+</pre>
+<p>
+	If all you're doing is changing one or two things, you can also reference those specific attributes through HTML instead of a config object:
+</p>
+<pre>
+    &lt;div parallax 
+        [parallaxInitVal]="-300"
+        [parallaxRatio]=".3"
+    id="second-example"&gt;&lt;/div&gt;
+</pre>
+<p>
+	My preference is just use the config object, defined in HTML, though I've used the other strategies before, too.  Remember that with either of the data-binding syntaxes, you need to make sure that it make sense from a JavaScript standpoint (e.g. strings are strings, numbers are numbers, variables are variables).
+</p>
+
+<br>
+<h3>Example 3 - Watching a Different Element's Scroll</h3>
+<p>
+	Suppose you want to track the scroll of a different element on the page that has a unique id (such as a scrolling route element on a separate component).  You can pass in a scrollerId that is the unique id for that element you want to track the scrolling of.  Now the div below isn't tracking the scrolling of the page, but of the element beneath it, moving the picture from left to right rather than right to left.
+</p>
+<div parallax [config]="{
+	parallaxCss: 'backgroundPositionX',
+	parallaxRatio: -3,
+	scrollerId: 'special-scroll-3'
+}" id="third-example"></div>
+<div id="special-scroll-3">
+	<p>
+		Bacon ipsum dolor amet tenderloin pork salami leberkas ham hock pork chop. Doner sirloin capicola brisket hamburger. Filet mignon flank jowl cow turkey ground round. Kielbasa jowl alcatra biltong, meatloaf chicken pastrami swine strip steak doner pork loin jerky porchetta chuck capicola. Tail brisket shoulder capicola doner meatball ham hock.
+	</p>
+	<p>
+		Rump tri-tip chicken shoulder ball tip bresaola jowl alcatra tongue bacon shank. Beef ribs bresaola frankfurter pork tri-tip strip steak pork belly spare ribs sausage cow. Spare ribs tri-tip ribeye cupim t-bone pig corned beef. Beef frankfurter sausage t-bone, ball tip landjaeger pastrami rump kevin doner. Beef ribs venison boudin turducken shoulder pastrami, t-bone pork loin short loin sirloin. Jerky pastrami capicola pork, chuck biltong cow t-bone tenderloin tail tri-tip shank prosciutto. Corned beef pork belly kevin, bresaola sausage filet mignon swine prosciutto capicola frankfurter ball tip.
+	</p>
+	<p>
+		Spare ribs salami pastrami fatback beef ribs shankle bacon tenderloin cow ham hock shoulder corned beef short loin short ribs. Ball tip cow strip steak, fatback turkey kevin boudin meatball venison. Sausage salami meatloaf ham hock, kevin ground round short loin shankle beef ribs kielbasa tongue porchetta tenderloin beef. Turducken tri-tip pork frankfurter, kevin ball tip chicken kielbasa. Turducken picanha pastrami ham hock jerky beef frankfurter brisket bacon ball tip cow sirloin. Short loin turkey pork loin beef ribs boudin chicken jerky shankle salami meatball.
+	</p>
+</div>
+
+<h5>HTML:</h5>
+<pre>
+    &lt;div parallax [config]="{
+    	parallaxCss: 'backgroundPositionX',
+    	parallaxRatio: -3,
+    	scrollerId: 'special-scroll-3'
+    }" id="third-example"&gt;&lt;/div&gt;
+	
+    &lt;div id="special-scroll-3"&gt;
+        . . . CONTENT . . .
+    &lt;/div&gt;
+</pre>
+
+<p>
+	You could also specify the scrolling-watched element from the HTML via the ng2 special syntax of defining an element variable in the template.  Just be mindful that the '#' does gets included, not on the config object, but on the element you're wanting to pass into the object.
+</p>
+
+<h5>HTML:</h5>
+<pre>
+    &lt;div parallax [config]="{
+    	parallaxCss: 'backgroundPositionX',
+    	parallaxRatio: -3,
+    	scrollElement: <u><b>scroller</b></u>
+    }" id="third-example"&gt;&lt;/div&gt;
+	
+    &lt;div id="special-scroll-3" <u><b>#scroller</b></u>&gt;
+        . . . CONTENT . . .
+    &lt;/div&gt;
+</pre>
+
+<p>
+	You also have the 'parallaxElement' option you can pass into the config object as well, if the element you're wanting the effect to apply to isn't the element you're putting the "parallax" attribute onto.  Usually, you would put the "parallax" attribute straight onto the element you'd want the scrolling to modify, but the option is open to you.  It'd be using the same syntax of "#" on the element you want it to apply to, however you can't currently pass in the string id of the parallax element.
+</p>
