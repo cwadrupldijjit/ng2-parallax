@@ -14,13 +14,6 @@
 	background-size: initial;
 }
 
-#special-scroll-3, #special-scroll-4, #special-scroll-5 {
-	height: 200px;
-	overflow: auto;
-	
-	max-width: 100%;
-}
-
 #fourth-example-text {
 	height: auto;
 	width: auto;
@@ -40,6 +33,10 @@
 }
 
 .example-textboxes {
+	max-width: 700px;
+	height: 200px;
+	overflow: auto;
+	
 	box-sizing: border-box;
 	
 	border: 1px solid gray;
