@@ -39,17 +39,17 @@ To reference it in your application, you can import it just like the rest of the
 _Using the npm package:_
 ```typescript
 import { Component,
-		 View } from 'angular2/core';
-import {Parallax,
-		ParallaxConfig } from 'ng2-parallax/dist/ts/parallax.directive';
+         View } from 'angular2/core';
+import { Parallax,
+         ParallaxConfig } from 'ng2-parallax/dist/ts/parallax.directive';
 ```
 
 _Using a local copy:_
 ```typescript
 import { Component,
-		 View } from 'angular2/core';
+         View } from 'angular2/core';
 import { Parallax,
-		 ParallaxConfig } from './path/to/directives/parallax.directive';
+         ParallaxConfig } from './path/to/directives/parallax.directive';
 ```
 
 If you import both Parallax and ParallaxConfig, you can get some typings for the parallaxConfig object you can define in your component's class so that error checking is available for that object.  You'll see how to implement that shortly.
@@ -58,23 +58,23 @@ In order to get your component to recognize it, you need to add it to your compo
 
 ```typescript
 @Component({
-	selector: 'my-app',
-	templateUrl: `./path/to/template.html`,
-	directives: [
-		Parallax  // <----- Right here
-	]
+    selector: 'my-app',
+    templateUrl: `./path/to/template.html`,
+    directives: [
+        Parallax  // <----- Right here
+    ]
 })
 ```
 Or:
 ```typescript
 @Component({
-	selector: 'my-app'
+    selector: 'my-app'
 })
 @View({
-	templateUrl: `./path/to/template.html`,
-	directives: [
-		Parallax  // <----- Right here
-	]
+    templateUrl: `./path/to/template.html`,
+    directives: [
+        Parallax  // <----- Right here
+    ]
 })
 class MyComponent {}
 ```
