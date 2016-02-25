@@ -6,31 +6,19 @@ You can use this directive right now if you write Angular 2 code using SystemJS 
 
 ### Installation of files
 In order to install this plugin, you can do one of a few things:
-<ol>
-<li> 
-Install from npm:<br>
+
+ - Install from npm:
 ```
 npm install --save ng2-parallax
 ```
-</li>
-<li>
-clone it from the project GitHub repository<br>
+  - clone it from the project GitHub repository:
 ```
 git clone https://github.com/cwadrupldijjit/ng2-parallax
 ```
-<br>
 **If you'd like to contribute, feel free to fork it.**
-</li>
-<li> 
-[Download the zip](http://github.com/cwadrupldijjit/ng2-parallax/zipball/master)
-</li>
-<li> 
-[Download the .tar.gz](http://github.com/cwadrupldijjit/ng2-parallax/tarball/master)
-</li>
-<li> 
-Copy code from [the file itself](https://raw.githubusercontent.com/cwadrupldijjit/ng2-parallax/master/examples/ts-ng2-parallax/app/parallax.directive.ts) (ts version)
-</li>
-</ol>
+  - [Download the zip](http://github.com/cwadrupldijjit/ng2-parallax/zipball/master)
+  - [Download the .tar.gz](http://github.com/cwadrupldijjit/ng2-parallax/tarball/master)
+  - Copy code from [the file itself](https://raw.githubusercontent.com/cwadrupldijjit/ng2-parallax/master/examples/ts-ng2-parallax/app/parallax.directive.ts) (ts version)
 
 If you have copied/created a version of the directive file (either `parallax.directive.ts` or `parallax.directive.js`), place the copy of the file in a convenient place to reference it in your working directory, and reference however you need to have it be available in the rest of your application.  
 
