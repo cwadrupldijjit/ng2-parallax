@@ -19,6 +19,7 @@ var tsconfig = {
 	emitDecoratorMetadata: true
 };
 
+// es5-specific
 var pathToEs5 = './src/es5/**/*.js';
 var outputDist_es5 = './dist/es5/';
 
@@ -32,6 +33,12 @@ function tsTranspileSystem(destination) {
 			.pipe(tsc(tsconfig_system))
 		.pipe(sourcemap.write())
 		.pipe(gulp.dest(destination));
+	
+	gulp.src('./parallax-ts.ts')
+		.pipe(sourcemap.init())
+			.pipe(tsc(tsconfig_system))
+		.pipe(sourcemap.write())
+		.pipe(gulp.dest('./'));
 }
 
 function copyToDist() {
@@ -54,6 +61,8 @@ function copyToDist() {
 		gulp.src(pathToEs5)
 			.pipe(gulp.dest(outputDist_es5)),
 		
+		/* This task doesn't work for some reason, deriving from possibly not being able to
+		   find the files, which doesn't make sense since the task above it works just fine. */
 		// // minify
 		// gulp.src(pathToEs5)
 		// 	.pipe(uglify())
@@ -64,6 +73,10 @@ function copyToDist() {
 	]);
 	
 	combine.on('error', console.error.bind(console));
+}
+
+function compileTsPointer () {
+	
 }
 
 function watchForChanges() {
