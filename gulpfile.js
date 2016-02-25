@@ -7,7 +7,8 @@ var rename = require('gulp-rename');
 var watch = require('gulp-watch');
 
 // ts-specific  
-var pathToTs = './src/**/*.ts';
+var pathToRef = './typings/main.d.ts';
+var pathToTs = [pathToRef, './src/**/*.ts'];
 var outputTsSrc = './src/';
 var outputDist_ts = './dist/';
 var tsconfig = {
@@ -66,10 +67,10 @@ function copyToDist() {
 }
 
 function watchForChanges() {
-	watch(pathToTs, tsTranspileSystem.bind('./src/'));
+	watch(pathToTs, tsTranspileSystem.bind(null, './src/'));
 }
 
-gulp.task('tsc-system', tsTranspileSystem.bind('./src/'));
+gulp.task('tsc-system', tsTranspileSystem.bind(null, './src/'));
 gulp.task('watch', watchForChanges);
 gulp.task('copy-and-minify', copyToDist);
 
