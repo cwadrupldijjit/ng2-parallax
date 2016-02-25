@@ -197,4 +197,4 @@ class Parallax implements OnInit {
 }
 
 
-export { Parallax, ParallaxConfig }
+export { Parallax, ParallaxConfig };
