@@ -19,7 +19,7 @@ clone it from the project GitHub repository<br>
 git clone https://github.com/cwadrupldijjit/ng2-parallax
 ```
 <br>
-**If you'd like to contribute, feel free fork it.**
+**If you'd like to contribute, feel free to fork it.**
 </li>
 <li> 
 [Download the zip](http://github.com/cwadrupldijjit/ng2-parallax/zipball/master)
