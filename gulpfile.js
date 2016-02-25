@@ -5,7 +5,7 @@ var gulp = require('gulp'),
 	rename = require('gulp-rename'),
 	watch = require('gulp-watch');
 
-var pathToTs = './examples/ts-ng2-parallax/app/**/*.ts';
+var pathToTs = './src/**/*.ts';
 var outputCssPath = './'
 var tsconfig = {
 	target: 'ES5',
@@ -15,25 +15,26 @@ var tsconfig = {
 	emitDecoratorMetadata: true
 };
 
+var tsconfig_system = new Object(tsconfig);
+tsconfig_system.module = 'system';
+tsconfig_system.moduleResolution = 'node';
+
 function tsTranspileSystem() {
-	var tsconfig_system = new Object(tsconfig);
-	tsconfig_system.module = 'system';
-	
 	gulp.src(pathToTs)
 		.pipe(sourcemap.init())
 			.pipe(tsc(tsconfig_system))
 		.pipe(sourcemap.write())
-		.pipe(gulp.dest('./dist/ts/'));
+		.pipe(gulp.dest('./src/'));
 }
 
 function copyToDist() {
 	gulp.src(pathToTs)
-		.pipe(tsc(tsconfig))
+		.pipe(tsc(tsconfig_system))
 		.pipe(uglify())
-		.pipe(rename(function(path) {
-			
+		.pipe(rename({
+			suffix: '.min'
 		}))
-		.pipe(gulp.dest('./dist/ts/'));
+		.pipe(gulp.dest('./dist/'));
 }
 
 function watchForChanges() {
