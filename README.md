@@ -25,11 +25,39 @@ If you have copied/created a version of the directive file (either `parallax.dir
 To reference it in your application, you can import it just like the rest of the Angular files and components.
 
 _Using the npm package:_
+First, you have to register where the ng2-parallax is:
+```html
+<!-- index.html -->
+<script>
+	System.config({
+		paths: {
+			'/*': '/app/*',
+			'ng2-parallax/*': '/node_modules/ng2-parallax/*' // <--- add this
+		},
+		packages: {
+			app: {
+				format: 'register',
+				defaultExtension: 'js'
+			},
+			'/node_modules/ng2-parallax': { // <--- and this
+				format: 'register',
+				defaultExtension: js
+			}
+		}
+	});
+	
+	System.import('/app/boot')
+		.then(null, console.error.bind(console));
+</script>
+```
+
+And then you can import it just like the Angular 2 components:
+
 ```typescript
 import { Component,
          View } from 'angular2/core';
 import { Parallax,
-         ParallaxConfig } from 'ng2-parallax/dist/ts/parallax.directive';
+         ParallaxConfig } from 'ng2-parallax/parallax-ts';
 ```
 
 _Using a local copy:_
