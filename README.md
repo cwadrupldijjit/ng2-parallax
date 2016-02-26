@@ -29,25 +29,25 @@ First, you have to register where the ng2-parallax is:
 ```html
 <!-- index.html -->
 <script>
-	System.config({
-		paths: {
-			'/*': '/app/*',
-			'ng2-parallax/*': '/node_modules/ng2-parallax/*' // <--- add this
-		},
-		packages: {
-			app: {
-				format: 'register',
-				defaultExtension: 'js'
-			},
-			'/node_modules/ng2-parallax': { // <--- and this
-				format: 'register',
-				defaultExtension: js
-			}
-		}
-	});
-	
-	System.import('/app/boot')
-		.then(null, console.error.bind(console));
+    System.config({
+        paths: {
+            '/*': '/app/*',
+            'ng2-parallax/*': '/node_modules/ng2-parallax/*' // <--- add this
+        },
+        packages: {
+            app: {
+                format: 'register',
+                defaultExtension: 'js'
+            },
+            '/node_modules/ng2-parallax': { // <--- and this
+                format: 'register',
+                defaultExtension: js
+            }
+        }
+    });
+    
+    System.import('/app/boot')
+        .then(null, console.error.bind(console));
 </script>
 ```
 
