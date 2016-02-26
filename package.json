@@ -1,6 +1,6 @@
 {
   "name": "ng2-parallax",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Parallax effect module for Angular 2 Beta",
   "main": "server.js",
   "repository": {
