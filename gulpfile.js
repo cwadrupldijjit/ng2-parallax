@@ -8,35 +8,59 @@ var watch = require('gulp-watch');
 
 // ts-specific  
 var pathToRef = './typings/main.d.ts';
-var pathToTs = [pathToRef, './src/**/*.ts'];
-var outputTsSrc = './src/';
-var outputDist_ts = './dist/';
-var tsconfig = {
-	target: 'ES5',
-	noImplicitAny: false,
-	removeComments: false,
-	experimentalDecorators: true,
-	emitDecoratorMetadata: true
+var pathToTs = [pathToRef, './src/ts/parallax.directive.ts'];
+function TS_Config(module) {
+	this.target = 'ES5';
+	this.moduleResolution = 'node';
+	this.noImplicitAny = false;
+	this.removeComments = false;
+	this.experimentalDecorators = true;
+	this.emitDecoratorMetadata = true;
+	
+	this.module = module;
+};
+
+var destinations = {
+	es5: './dist/es5/',
+	system: './dist/ts/system/',
+	commonjs: './dist/ts/commonjs/'
 };
 
 // es5-specific
 var pathToEs5 = './src/es5/**/*.js';
-var outputDist_es5 = './dist/es5/';
 
-var tsconfig_system = new Object(tsconfig);
+var tsconfig_system = new TS_Config('system');
 tsconfig_system.module = 'system';
-tsconfig_system.moduleResolution = 'node';
+console.log('tsconfig_system', tsconfig_system);
 
-function tsTranspileSystem(destination) {
+var tsconfig_commonjs = new TS_Config('commonjs');
+tsconfig_commonjs.module = 'commonjs';
+console.log('tsconfig_commonjs', tsconfig_commonjs);
+
+function tsTranspileSystem() {
 	gulp.src(pathToTs)
 		.pipe(sourcemap.init())
 			.pipe(tsc(tsconfig_system))
 		.pipe(sourcemap.write())
-		.pipe(gulp.dest(destination));
+		.pipe(gulp.dest(destinations.system));
 	
-	gulp.src('./parallax-ts.ts')
+	gulp.src('./system.ts')
 		.pipe(sourcemap.init())
 			.pipe(tsc(tsconfig_system))
+		.pipe(sourcemap.write())
+		.pipe(gulp.dest('./'));
+}
+
+function tsTranspileCommonJs() {
+	gulp.src(pathToTs)
+		.pipe(sourcemap.init())
+			.pipe(tsc(tsconfig_commonjs))
+		.pipe(sourcemap.write())
+		.pipe(gulp.dest(destinations.commonjs));
+	
+	gulp.src('./commonjs.ts')
+		.pipe(sourcemap.init())
+			.pipe(tsc(tsconfig_commonjs))
 		.pipe(sourcemap.write())
 		.pipe(gulp.dest('./'));
 }
@@ -45,21 +69,32 @@ function copyToDist() {
 	combine.obj([
 		// ts
 		// copy
-		tsTranspileSystem(outputDist_ts),
+		tsTranspileSystem(),
 		
-		// minify
+		// minify System
 		gulp.src(pathToTs)
 			.pipe(tsc(tsconfig_system))
 			.pipe(uglify())
 			.pipe(rename({
 				suffix: '.min'
 			}))
-			.pipe(gulp.dest(outputDist_ts)),
+			.pipe(gulp.dest(destinations.system)),
+		
+		tsTranspileCommonJs(),
+		
+		// minify commonjs
+		gulp.src(pathToTs)
+			.pipe(tsc(tsconfig_commonjs))
+			.pipe(uglify())
+			.pipe(rename({
+				suffix: '.min'
+			}))
+			.pipe(gulp.dest(destinations.commonjs)),
 		
 		// es5
 		// copy
 		gulp.src(pathToEs5)
-			.pipe(gulp.dest(outputDist_es5)),
+			.pipe(gulp.dest(destinations.es5)),
 		
 		/* This task doesn't work for some reason, deriving from possibly not being able to
 		   find the files, which doesn't make sense since the task above it works just fine. */
@@ -75,16 +110,14 @@ function copyToDist() {
 	combine.on('error', console.error.bind(console));
 }
 
-function compileTsPointer () {
-	
-}
-
 function watchForChanges() {
-	watch(pathToTs, tsTranspileSystem.bind(null, './src/'));
+	watch(pathToTs, tsTranspileSystem);
+	watch(pathToTs, tsTranspileCommonJs);
 }
 
-gulp.task('tsc-system', tsTranspileSystem.bind(null, './src/'));
+gulp.task('tsc-system', tsTranspileSystem);
+gulp.task('tsc-commonjs', tsTranspileCommonJs);
 gulp.task('watch', watchForChanges);
 gulp.task('copy-and-minify', copyToDist);
 
-gulp.task('default', ['tsc-system', 'watch']);
+gulp.task('default', ['tsc-system', 'tsc-commonjs', 'watch']);
