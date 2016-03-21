@@ -69,10 +69,10 @@ And then you can import it just like the Angular 2 components:
 import { Component,
          View } from 'angular2/core';
 import { Parallax,
-		// either (for Systemjs)
+        // either (for Systemjs)
          ParallaxConfig } from 'ng2-parallax/system';
-		// or, if webpack is finding it fine:
-		 ParallaxConfig } from 'ng2-parallax/commonjs';
+        // or, if webpack is finding it fine:
+         ParallaxConfig } from 'ng2-parallax/commonjs';
 ```
 
 #### Using a local copy:
