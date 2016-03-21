@@ -59,9 +59,9 @@ First, you have to register where the ng2-parallax is:
 
 **_For_ `webpack` _Users_**:
 
-**_NOTE: Webpack isn't as straightforward as I'd assume with requiring node_modules such as the ng2-parallax, and as such, despite my efforts in figuring out what is preventing it from reading from node_modules, I've been unable to locate the source of the problem.  The direction below is just a temporary fix before we can get the situation straight with that one.  Any help to get that working fine with webpack would be greatly appreciated._**
+_NOTE: Webpack isn't as straightforward as I'd assume with requiring node_modules such as the ng2-parallax, and as such, despite my efforts in figuring out what is preventing it from reading from node_modules, I've been unable to locate the source of the problem.  The direction below is just a temporary fix before we can get the situation straight with that one.  Any help to get that working fine with webpack would be greatly appreciated._
 
-**_If you have_ `npm install`_-ed the parallax directive, you will have to either figure out how to reference it without problems, or you could simply copy it into a subdirectory of your `app` or `src` folder where it's easily accessible, then follow the import directions in the "Using a local copy" section below._**
+_If you have_ `npm install`_-ed the parallax directive, you will have to either figure out how to reference it without problems, or you could simply copy it into a subdirectory of your `app` or `src` folder where it's easily accessible, then follow the import directions in the "Using a local copy" section below._
 
 And then you can import it just like the Angular 2 components:
 
