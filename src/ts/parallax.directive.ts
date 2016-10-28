@@ -5,7 +5,7 @@ import { Directive,
 		 Host, 
 		 Input,
 		 Optional, 
-		 OnInit } from 'angular2/core';
+		 OnInit } from '@angular/core';
 
 /* 
 These are optional values you can include in the config object you can pass into the 

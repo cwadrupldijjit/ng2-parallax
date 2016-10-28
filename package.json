@@ -13,9 +13,10 @@
   },
   "author": "Samuel Skeen <https://github.com/cwadrupldijjit>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+  },
   "peerDependencies": {
-    "angular2": ">=2.0.0-beta.2"
+    "@angular/core": "^2.1.0"
   },
   "devDependencies": {
     "gulp": "^3.9.0",

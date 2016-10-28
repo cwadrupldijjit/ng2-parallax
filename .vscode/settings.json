@@ -2,5 +2,6 @@
 {
 	"editor.wrappingColumn": 0,
 	"editor.wrappingIndent": "indent",
-	"editor.insertSpaces": false
+	"editor.insertSpaces": false,
+	"typescript.check.workspaceVersion": false
 }
