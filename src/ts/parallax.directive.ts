@@ -125,9 +125,9 @@ class Parallax implements OnInit {
 			// debugger;
 			if (this.cssKey === 'backgroundPosition') {
 				if (this.parallaxAxis === 'X') {
-					resultVal = calcVal + this.cssUnit + ' 0';
+				  resultVal = 'calc(50% + ' + calcVal + this.cssUnit + ') center';
 				} else {
-					resultVal = '0 ' + calcVal + this.cssUnit;
+				  resultVal = 'center calc(50% + ' + calcVal + this.cssUnit + ')';
 				}
 			} else if (this.isSpecialVal) {
 				resultVal = this.cssValue + '(' + calcVal + this.cssUnit + ')';
