@@ -31,11 +31,9 @@ var pathToEs5 = './src/es5/**/*.js';
 
 var tsconfig_system = new TS_Config('system');
 tsconfig_system.module = 'system';
-console.log('tsconfig_system', tsconfig_system);
 
 var tsconfig_commonjs = new TS_Config('commonjs');
 tsconfig_commonjs.module = 'commonjs';
-console.log('tsconfig_commonjs', tsconfig_commonjs);
 
 function tsTranspileSystem() {
 	gulp.src(pathToTs)

@@ -16,24 +16,24 @@ more than just the parallax effect, and it is able to transform anything about t
 */
 interface ParallaxConfig {
 	// the css property (converted to camelCase) that you want changed along with the
-	// value you want to assign to the css key; you should use ParallaxCss if you're 
+	// value you want to assign to the css key; you should use cssProperty if you're 
 	// just defining one property without special values
 	cssKey?: string;
 	
 	// this is used to define the css property you'd like to modify as you scroll
 	// default is backgroundPositionY
-	parallaxCss?: string;
+	cssProperty?: string;
 	
 	// ratio defining how fast, slow, or the direction of the changes on scrolling
-	parallaxRatio?: number;
+	ratio?: number;
 	
-	// this is the initial value in pixels for the parallaxCss property you defined
+	// this is the initial value in pixels for the cssProperty property you defined
 	// before or, if you didn't define one, it defaults to 0
-	parallaxInitVal?: number;
+	initialValue?: number;
 	
 	// use this if you want the parallax effect only if the passed in statement is 
 	// truthy; default is boolean true
-	parallaxIf?: any;
+	canMove?: any;
 	
 	// the id for the element on the page you'd like to track the scrolling of in the 
 	// case where the element is not available in the current component; 
@@ -84,11 +84,11 @@ class Parallax implements OnInit {
 	// in the config object; caveat for this is that angular 2 won't permit 
 	// more than 9 keys being passed in an object via the template
     @Input() cssKey: string = 'backgroundPosition';
-	@Input() parallaxCss: string = 'backgroundPositionY';
-	@Input() parallaxAxis: string = 'Y';
-    @Input() parallaxRatio: number = -.7;
-    @Input() parallaxInitVal: number = 0;
-	@Input() parallaxIf: any = true;
+	@Input() cssProperty: string = 'backgroundPositionY';
+	@Input() axis: 'X'|'Y' = 'Y';
+    @Input() ratio: number = -.7;
+    @Input() initialValue: number = 0;
+	@Input() canMove: any = true;
 	@Input() scrollerId: string;
 	@Input() maxValue: number;
 	@Input() minValue: number;
@@ -96,6 +96,8 @@ class Parallax implements OnInit {
 	@Input() cb;
 	@Input() cb_context: any = null;
 	@Input() cb_args: any[] = [];
+	@Input() scrollElement: any;
+	@Input() parallaxElement: HTMLElement;
 	
 	parallaxStyles: {} = {};
 	
@@ -103,18 +105,16 @@ class Parallax implements OnInit {
     private isSpecialVal: boolean = false;
 	
 	private hostElement: HTMLElement;
-	@Input() scrollElement: any;
-	@Input() parallaxElement: HTMLElement;
 	
 	private evaluateScroll = () => {
-		if (this.parallaxIf) {
+		if (this.canMove) {
 			let resultVal: string;
 			let calcVal: number;
 			
 			if (this.scrollElement instanceof Window)
-				calcVal = this.scrollElement.scrollY * this.parallaxRatio + this.parallaxInitVal;
+				calcVal = this.scrollElement.scrollY * this.ratio + this.initialValue;
 			else
-				calcVal = this.scrollElement.scrollTop * this.parallaxRatio + this.parallaxInitVal;
+				calcVal = this.scrollElement.scrollTop * this.ratio + this.initialValue;
 			
 			if (this.maxValue !== undefined && calcVal >= this.maxValue)
 				calcVal = this.maxValue;
@@ -124,7 +124,7 @@ class Parallax implements OnInit {
 			// added after realizing original setup wasn't compatible in Firefox
 			// debugger;
 			if (this.cssKey === 'backgroundPosition') {
-				if (this.parallaxAxis === 'X') {
+				if (this.axis === 'X') {
 				  resultVal = 'calc(50% + ' + calcVal + this.cssUnit + ') center';
 				} else {
 				  resultVal = 'center calc(50% + ' + calcVal + this.cssUnit + ')';
@@ -144,31 +144,31 @@ class Parallax implements OnInit {
 		}
 	}
 	
-	ngOnInit() {
+	public ngOnInit() {
 		let cssValArray: string[];
 		
 		// console.log('%s initialized on element', this.name, this.hostElement);
 		// console.log(this);
 		
 		for (let prop in this.config) { this[prop] = this.config[prop]; }
-		this.parallaxCss = this.parallaxCss ? this.parallaxCss : 'backgroundPositionY';
-		if (this.parallaxCss.match(/backgroundPosition/i)) {
-			if (this.parallaxCss.split('backgroundPosition')[1].toUpperCase() === 'X') {
-				this.parallaxAxis = 'X';
+		this.cssProperty = this.cssProperty ? this.cssProperty : 'backgroundPositionY';
+		if (this.cssProperty.match(/backgroundPosition/i)) {
+			if (this.cssProperty.split('backgroundPosition')[1].toUpperCase() === 'X') {
+				this.axis = 'X';
 			}
 			
-			this.parallaxCss = 'backgroundPosition';
+			this.cssProperty = 'backgroundPosition';
 		}
 		
-        cssValArray = this.parallaxCss.split(':');
+        cssValArray = this.cssProperty.split(':');
         this.cssKey = cssValArray[0];
         this.cssValue = cssValArray[1];
 		
         this.isSpecialVal = this.cssValue ? true : false;
         if (!this.cssValue) this.cssValue = this.cssKey;
 		
-        this.parallaxRatio = +this.parallaxRatio;
-        this.parallaxInitVal = +this.parallaxInitVal;
+        this.ratio = +this.ratio;
+        this.initialValue = +this.initialValue;
 		
 		this.parallaxElement = this.parallaxElement || this.hostElement;
 		if (!this.scrollElement) {

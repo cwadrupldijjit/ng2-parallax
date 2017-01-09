@@ -1,57 +1,56 @@
-declare class Parallax {
-	name: string;
-	
-    config: ParallaxConfig;
-	// the following properties are all part of the config object, which for 
-	// brevity's sake, you can do a bunch of operations in bulk by passing 
-	// in the config object; caveat for this is that angular 2 won't permit 
-	// more than 9 keys being passed in an object via the template
-    cssKey: string;
-	parallaxCss: string;
-	parallaxAxis: string;
-    parallaxRatio: number;
-    parallaxInitVal: number;
-	parallaxIf: any;
-	scrollerId: string;
-	maxValue: number;
-	minValue: number;
-	cssUnit: string;
-	cb():void;
-	cb_context: any;
-	cb_args: any[];
-	
-	parallaxStyles: {};
-	
-    private cssValue: string;
-    private isSpecialVal: boolean;
-	
-	private hostElement: HTMLElement;
-	scrollElement: any;
-	parallaxElement: HTMLElement;
-	
-	private evaluateScroll(): void;
-}
+/**
+ * @class Parallax
+ * 
+ * Declaring Parallax class so that it's importable in the local code
+ */
+declare class Parallax { }
 
+/**
+ * @var {Object} ParallaxConfig
+ * 
+ * This is useful in defining the parallax configuration from the component itself
+ */
 declare interface ParallaxConfig {
-	// the css property (converted to camelCase) that you want changed along with the
-	// value you want to assign to the css key; you should use ParallaxCss if you're 
-	// just defining one property without special values
+	/**
+	 * @prop {string} cssKey
+	 * 
+	 * The camelCase css property (that is used on the parallaxElement's style property)
+	 * that you want changed along with the value you want to change it to.  This is a more
+	 * advanced version of the cssProperty key, and generally isn't used unless there are
+	 * special values you need to use it with.
+	 */
 	cssKey?: string;
 	
-	// this is used to define the css property you'd like to modify as you scroll
-	// default is backgroundPositionY
-	parallaxCss?: string;
+	/**
+	 * @prop {string} cssProperty
+	 * 
+	 * this is used to define the css property you'd like to modify as you scroll
+	 * default is backgroundPositionY
+	 */
+	cssProperty?: string;
 	
-	// ratio defining how fast, slow, or the direction of the changes on scrolling
-	parallaxRatio?: number;
+	/**
+	 * @prop {number} ratio
+	 * 
+	 * ratio describing the magnitude of changes made upon scrolling
+	 */
+	ratio?: number;
+	
+	/**
+	 * @prop {string} axis
+	 * 
+	 * This is used to determine whether or not the parallax movement will be horizontal
+	 * or vertical.  Defaults to 'Y'.
+	 */
+	axis?: 'X'|'Y';
 	
 	// this is the initial value in pixels for the parallaxCss property you defined
 	// before or, if you didn't define one, it defaults to 0
-	parallaxInitVal?: number;
+	initialValue?: number;
 	
 	// use this if you want the parallax effect only if the passed in statement is 
 	// truthy; default is boolean true
-	parallaxIf?: any;
+	canMove?: any;
 	
 	// the id for the element on the page you'd like to track the scrolling of in the 
 	// case where the element is not available in the current component; 
