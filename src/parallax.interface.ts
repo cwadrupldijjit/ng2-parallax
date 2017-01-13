@@ -1,50 +1,24 @@
-/**
- * @class Parallax
- * 
- * Declaring Parallax class so that it's importable in the local code
- */
-declare class Parallax { }
 
-/**
- * @var {Object} ParallaxConfig
- * 
- * This is useful in defining the parallax configuration from the component itself
- */
-declare interface ParallaxConfig {
-	/**
-	 * @prop {string} cssKey
-	 * 
-	 * The camelCase css property (that is used on the parallaxElement's style property)
-	 * that you want changed along with the value you want to change it to.  This is a more
-	 * advanced version of the cssProperty key, and generally isn't used unless there are
-	 * special values you need to use it with.
-	 */
+/* 
+These are optional values you can include in the config object you can pass into the 
+directive for custom properties you want to use this with.  This tool can be used for 
+more than just the parallax effect, and it is able to transform anything about the 
+[parallaxElement] that you want to have bound to the scrolling of the nested element.  
+*/
+export interface ParallaxConfig {
+	// the css property (converted to camelCase) that you want changed along with the
+	// value you want to assign to the css key; you should use cssProperty if you're 
+	// just defining one property without special values
 	cssKey?: string;
 	
-	/**
-	 * @prop {string} cssProperty
-	 * 
-	 * this is used to define the css property you'd like to modify as you scroll
-	 * default is backgroundPositionY
-	 */
+	// this is used to define the css property you'd like to modify as you scroll
+	// default is backgroundPositionY
 	cssProperty?: string;
 	
-	/**
-	 * @prop {number} ratio
-	 * 
-	 * ratio describing the magnitude of changes made upon scrolling
-	 */
+	// ratio defining how fast, slow, or the direction of the changes on scrolling
 	ratio?: number;
 	
-	/**
-	 * @prop {string} axis
-	 * 
-	 * This is used to determine whether or not the parallax movement will be horizontal
-	 * or vertical.  Defaults to 'Y'.
-	 */
-	axis?: 'X'|'Y';
-	
-	// this is the initial value in pixels for the parallaxCss property you defined
+	// this is the initial value in pixels for the cssProperty property you defined
 	// before or, if you didn't define one, it defaults to 0
 	initialValue?: number;
 	
@@ -87,5 +61,3 @@ declare interface ParallaxConfig {
 	// callback context in the case where the callback is context-specific
 	cb_context?: any;
 }
-
-export { Parallax, ParallaxConfig };

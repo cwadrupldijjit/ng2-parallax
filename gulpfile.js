@@ -1,121 +1,208 @@
-var gulp = require('gulp');
-var combine = require('stream-combiner2');
-var tsc = require('gulp-typescript');
-var sourcemap = require('gulp-sourcemaps');
-var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-var watch = require('gulp-watch');
+const gulp = require('gulp');
 
-// ts-specific  
-var pathToRef = './typings/main.d.ts';
-var pathToTs = [pathToRef, './src/ts/parallax.directive.ts'];
-function TS_Config(module) {
-	this.target = 'ES5';
-	this.moduleResolution = 'node';
-	this.noImplicitAny = false;
-	this.removeComments = false;
-	this.experimentalDecorators = true;
-	this.emitDecoratorMetadata = true;
-	
-	this.module = module;
+/** To log like console.log().. */
+var gutil = require('gulp-util');
+
+/** del to remove dist directory */
+const del = require('del');
+
+/** load templates and styles in ng2 components */
+var embedTemplates = require('gulp-inline-ng2-template');
+
+/** TSLint checker */
+const tslint = require('gulp-tslint');
+
+/** Sass style */
+const postcss = require('gulp-postcss');
+const sass = require('gulp-sass');
+const autoprefixer = require('autoprefixer');
+const cssnano = require('cssnano');
+const scss = require('postcss-scss');
+const stripInlineComments = require('postcss-strip-inline-comments');
+
+/** External command runner */
+const exec = require('child_process').exec;
+
+/**OS Access */
+const os = require('os');
+
+/** File Access */
+const fs = require('fs');
+const file = require('gulp-file');
+const path = require('path');
+
+/** To properly handle pipes on error */
+const pump = require('pump');
+
+const LIBRARY_NAME = 'ng2-parallax';
+
+const config = {
+    allSass: 'src/**/*.scss',
+    allTs: 'src/**/*.ts',
+    allTsd: 'typings/index.d.ts',
+    outputDir: 'dist/',
+    coverageDir: 'coverage/'
 };
 
-var destinations = {
-	es5: './dist/es5/',
-	system: './dist/ts/system/',
-	commonjs: './dist/ts/commonjs/'
-};
 
-// es5-specific
-var pathToEs5 = './src/es5/**/*.js';
-
-var tsconfig_system = new TS_Config('system');
-tsconfig_system.module = 'system';
-
-var tsconfig_commonjs = new TS_Config('commonjs');
-tsconfig_commonjs.module = 'commonjs';
-
-function tsTranspileSystem() {
-	gulp.src(pathToTs)
-		.pipe(sourcemap.init())
-			.pipe(tsc(tsconfig_system))
-		.pipe(sourcemap.write())
-		.pipe(gulp.dest(destinations.system));
-	
-	gulp.src('./system.ts')
-		.pipe(sourcemap.init())
-			.pipe(tsc(tsconfig_system))
-		.pipe(sourcemap.write())
-		.pipe(gulp.dest('./'));
+//Helper functions
+function platformPath(path) {
+    return /^win/.test(os.platform()) ? `${path}.cmd` : path;
 }
 
-function tsTranspileCommonJs() {
-	gulp.src(pathToTs)
-		.pipe(sourcemap.init())
-			.pipe(tsc(tsconfig_commonjs))
-		.pipe(sourcemap.write())
-		.pipe(gulp.dest(destinations.commonjs));
-	
-	gulp.src('./commonjs.ts')
-		.pipe(sourcemap.init())
-			.pipe(tsc(tsconfig_commonjs))
-		.pipe(sourcemap.write())
-		.pipe(gulp.dest('./'));
+function startKarmaServer(isTddMode, done) {
+    var karmaServer = require('karma').Server;
+    var travis = process.env.TRAVIS;
+
+    var config = { configFile: `${__dirname}/karma.conf.js`, singleRun: !isTddMode, autoWatch: isTddMode };
+
+    if (travis) {
+        config['browsers'] = ['Chrome_travis_ci']; // 'Chrome_travis_ci' is defined in "customLaunchers" section of config/karma.conf.js
+    }
+
+    new karmaServer(config, () => done).start();
 }
 
-function copyToDist() {
-	combine.obj([
-		// ts
-		// copy
-		tsTranspileSystem(),
-		
-		// minify System
-		gulp.src(pathToTs)
-			.pipe(tsc(tsconfig_system))
-			.pipe(uglify())
-			.pipe(rename({
-				suffix: '.min'
-			}))
-			.pipe(gulp.dest(destinations.system)),
-		
-		tsTranspileCommonJs(),
-		
-		// minify commonjs
-		gulp.src(pathToTs)
-			.pipe(tsc(tsconfig_commonjs))
-			.pipe(uglify())
-			.pipe(rename({
-				suffix: '.min'
-			}))
-			.pipe(gulp.dest(destinations.commonjs)),
-		
-		// es5
-		// copy
-		gulp.src(pathToEs5)
-			.pipe(gulp.dest(destinations.es5)),
-		
-		/* This task doesn't work for some reason, deriving from possibly not being able to
-		   find the files, which doesn't make sense since the task above it works just fine. */
-		// // minify
-		// gulp.src(pathToEs5)
-		// 	.pipe(uglify())
-		// 	.pipe(rename({
-		// 		suffix: '.min'
-		// 	}))
-		// 	.pipe(gulp.dest(outputDist_es5))
-	]);
-	
-	combine.on('error', console.error.bind(console));
-}
+// Clean Tasks
+gulp.task('clean:dist', () => {
+    return del(config.outputDir);
+});
 
-function watchForChanges() {
-	watch(pathToTs, tsTranspileSystem);
-	watch(pathToTs, tsTranspileCommonJs);
-}
+gulp.task('clean:coverage', () => {
+    return del(config.coverageDir);
+});
 
-gulp.task('tsc-system', tsTranspileSystem);
-gulp.task('tsc-commonjs', tsTranspileCommonJs);
-gulp.task('watch', watchForChanges);
-gulp.task('copy-and-minify', copyToDist);
+// Compile Sass to css
+gulp.task('styles', (cb) => {
+    /**
+     * Remove comments, autoprefixer, Minifier
+     */
+    var processors = [
+        stripInlineComments,
+        autoprefixer,
+        cssnano
+    ];
+    pump([
+        gulp.src(config.allSass),
+        sass().on('error', sass.logError),
+        postcss(processors, { syntax: scss }),
+        gulp.dest('src')
+    ], cb);
+});
 
-gulp.task('default', ['tsc-system', 'tsc-commonjs', 'watch']);
+// TsLint the source files
+gulp.task('ts-lint', (cb) => {
+    pump([
+        gulp.src(config.allTs),
+        tslint({ formatter: "verbose" }),
+        tslint.report()
+    ], cb);
+});
+
+// Inline templates and styles in ng2 components
+gulp.task('inline-templates', ['clean:dist', 'styles', 'ts-lint'], (cb) => {
+    var defaults = {
+        base: '/src',
+        target: 'es5',
+        useRelativePaths: true
+    };
+    pump(
+        [
+            gulp.src(config.allTs),
+            embedTemplates(defaults),
+            gulp.dest(`${config.outputDir}/inlined`)
+        ],
+        cb);
+});
+
+// Compile inlined TS files with Angular Compiler (ngc)
+gulp.task('ngc', ['inline-templates'], (cb) => {
+    var executable = path.join(__dirname, platformPath('/node_modules/.bin/ngc'));
+    exec(`${executable} -p ./tsconfig-aot.json`, (err) => {
+        if (err) return cb(err); // return error
+        del(`${config.outputDir}/waste`);//delete useless *.ngfactory.ts files( will be regenerated by consumer)
+        del(`${config.outputDir}/inlined`); //delete temporary *.ts files with inlined templates and styles 
+        cb();
+    }).stdout.on('data', (data) => console.log(data));
+});
+
+// Clean, Lint, Test, Sass to css, Inline templates & Styles and Compile
+gulp.task('compile-ts', ['clean:dist', 'ts-lint', 'styles', 'ngc']);
+
+
+// Testing Tasks
+gulp.task('test', ['clean:coverage', 'compile-ts'], (cb) => {
+    const ENV = process.env.NODE_ENV = process.env.ENV = 'test';
+    startKarmaServer(false, cb);
+});
+
+gulp.task('watch', () => {
+    gulp.watch([config.allTs], ['compile-ts']);
+    gulp.watch([config.allSass], ['styles']);
+});
+
+gulp.task('test:watch', (cb) => {
+    const ENV = process.env.NODE_ENV = process.env.ENV = 'test';
+    startKarmaServer(true, cb);
+});
+
+// Prepare 'dist' folder publication to NPM
+gulp.task('npm', ['compile-ts', 'test'], (cb) => {
+    var pkgJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+    var targetPkgJson = {};
+    var fieldsToCopy = ['version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'];
+
+    targetPkgJson['name'] = LIBRARY_NAME;
+
+    //only copy needed properties from project's package json
+    fieldsToCopy.forEach((field) => { targetPkgJson[field] = pkgJson[field]; });
+
+    targetPkgJson['main'] = `index.js`;
+    targetPkgJson['module'] = 'index.js';
+    targetPkgJson['typings'] = 'index.d.ts';
+
+    // defines project's dependencies as 'peerDependencies' for final users
+    targetPkgJson.peerDependencies = {};
+    Object.keys(pkgJson.dependencies).forEach((dependency) => {
+        targetPkgJson.peerDependencies[dependency] = `^${pkgJson.dependencies[dependency]}`;
+    });
+
+    // copy the needed additional files in the 'dist' folder
+    pump(
+        [
+            gulp.src(['README.md', 'LICENSE', 'CHANGELOG.md']),
+            file('package.json', JSON.stringify(targetPkgJson, null, 2)),
+            gulp.dest(config.outputDir)
+        ],
+        cb);
+});
+
+// Publish 'dist' folder to NPM
+gulp.task('publish', ['npm'], (done) => {
+    // run npm publish terminal command to publish the 'dist' folder only
+    exec(`npm publish ${config.outputDir}`,
+        (error, stdout, stderr) => {
+            if (stderr) {
+                gutil.log(gutil.colors.red(stderr));
+            } else if (stdout) {
+                gutil.log(gutil.colors.green(stdout));
+            }
+            // execute callback when its done 
+            if (done) {
+                done();
+            }
+        }
+    );
+});
+
+// Just build the 'dist' folder (without publishing it to NPM)
+gulp.task('build', ['npm']);
+
+/** TODO: coverall task */
+// require('coveralls/bin/coveralls.js');
+
+// gulp.task('coverage',['build'], ()=>{
+
+// });
+
+gulp.task('default', ['build']);
