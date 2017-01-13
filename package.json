@@ -18,9 +18,7 @@
   "author": "Samuel Skeen <https://github.com/cwadrupldijjit>",
   "license": "MIT",
   "dependencies": {
-    "@angular/common": "2.0.0",
-    "@angular/core": "2.0.0",
-    "@angular/http": "2.0.0"
+    "@angular/core": "2.0.0"
   },
   "devDependencies": {
     "@angular/compiler": "2.0.0",
