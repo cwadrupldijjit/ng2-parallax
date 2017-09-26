@@ -1,7 +1,7 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-	"editor.wrappingColumn": 0,
 	"editor.wrappingIndent": "indent",
 	"editor.insertSpaces": false,
-	"typescript.check.workspaceVersion": false
+	"typescript.check.workspaceVersion": false,
+	"editor.wordWrap": "off"
 }
