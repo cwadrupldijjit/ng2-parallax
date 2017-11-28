@@ -93,7 +93,7 @@ class Parallax implements OnInit {
 	@Input() maxValue: number;
 	@Input() minValue: number;
 	@Input() cssUnit: string = 'px';
-	@Input() cb;
+	@Input() cb: any;
 	@Input() cb_context: any = null;
 	@Input() cb_args: any[] = [];
 	@Input() scrollElement: any;
